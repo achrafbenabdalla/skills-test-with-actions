@@ -7,20 +7,17 @@ on:
       - main
 
 jobs:
-  my_job:
-    runs-on: ubuntu-latest
+ build:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+    - name: Run markdown lint
+      run: |
+        npm install remark-cli remark-preset-lint-consistent vfile-reporter-json
+        npx remark . --use remark-preset-lint-consistent --report vfile-reporter-json 2> remark-lint-report.json
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
+    - uses: actions/upload-artifact@v3
       with:
-        node-version: 14
-
-    - name: Install dependencies
-      run: npm install
-
-    - name: Run tests
-      run: npm test
+        name: remark-lint-report
+        path: remark-lint-report.json
